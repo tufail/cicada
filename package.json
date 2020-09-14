@@ -1,5 +1,5 @@
 {
-	"name": "Cicada",
+	"name": "cicada",
 	"version": "1.0.0",
 	"description": "tracking.",
 	"main": "src/main.js",
@@ -10,14 +10,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/nkholski/phaser-plugin-starter.git"
+		"url": "git+https://github.com/tufail/cicada.git"
 	},
-	"author": "Niklas Berg",
+	"author": "Mohammed Tufail",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/nkholski/phaser-plugin-starter/issues"
+		"url": "https://github.com/tufail/cicada/issues"
 	},
-	"homepage": "https://github.com/nkholski/phaser-plugin-starter#readme",
+	"homepage": "https://github.com/tufail/cicada#readme",
 	"devDependencies": {
 		"babel-core": "^6.25.0",
 		"babel-eslint": "^7.2.3",
@@ -36,5 +36,8 @@
 	"dependencies": {
 		"js-cookie": "^2.2.1",
 		"webpack-cli": "^3.3.12"
+	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com/"
 	}
 }

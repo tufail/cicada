@@ -12,17 +12,17 @@ module.exports = {
 	watch: false,
 	context: `${__dirname}/src/plugin/`,
 	entry: {
-		Cicada: './main.js',
-		'Cicada.min': './main.js'
+		cicada: './main.js',
+		'cicada.min': './main.js'
 	},
 
 	output: {
 		path: `${__dirname}/dist/`,
 		filename: '[name].js',
-		library: 'Cicada',
+		library: 'cicada',
 		libraryTarget: 'umd',
 		umdNamedDefine: true,
-		sourceMapFilename: 'Cicada.min.map'
+		sourceMapFilename: 'cicada.min.map'
 	},
 
 	plugins: [

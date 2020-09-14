@@ -2,11 +2,11 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("Cicada", [], factory);
+		define("cicada", [], factory);
 	else if(typeof exports === 'object')
-		exports["Cicada"] = factory();
+		exports["cicada"] = factory();
 	else
-		root["Cicada"] = factory();
+		root["cicada"] = factory();
 })(window, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -421,4 +421,4 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 /***/ })
 /******/ ]);
 });
-//# sourceMappingURL=Cicada.min.map
+//# sourceMappingURL=cicada.min.map
