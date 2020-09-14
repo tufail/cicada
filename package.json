@@ -1,5 +1,5 @@
 {
-	"name": "cicada",
+	"name": "@tufail/cicada",
 	"version": "1.0.0",
 	"description": "tracking.",
 	"main": "src/main.js",
@@ -9,7 +9,6 @@
 		"dev": "webpack --config webpack.demo.config.js"
 	},
 	"repository": {
-		"type": "git",
 		"url": "https://github.com/tufail/cicada.git"
 	},
 	"author": "Mohammed Tufail",
