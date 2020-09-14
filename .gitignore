@@ -8,6 +8,7 @@ Thumbs.db
 indexLive.html
 *.bak*
 dev/
+.npmrc
 
 # Vendors
 node_modules/
