@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 
 export default class CicadaTrack {
 	constructor() {
-		this.url_src = this.getParameter('utm_source') || false;
+		this.url_src = this.getParameter('utm_source') || this.getParameter('gclid') || false;
 		this.url_mdm = this.getParameter('utm_medium') || false;
 		this.boot();
 	}
@@ -80,13 +80,16 @@ export default class CicadaTrack {
 
 	setFirstTrackingCookies() {
 		let src_cookie = Cookies.get('cicada_src');
+		debugger;
 		// If at least one URL parameter exist AND the cookie doesn't exist
 		if ((this.url_src !== false || this.url_mdm !== false) && (src_cookie == null || src_cookie == '')) {
 			if (this.url_src !== false) {
 				Cookies.set('cicada_src', this.url_src, { expires: 120 });
 			}
-			if (url_mdm !== false) {
+			if (this.url_mdm !== false) {
 				Cookies.set('cicada_mdm', this.url_mdm, { expires: 120 });
+			} else {
+				Cookies.set('cicada_mdm', 'adwords', { expires: 120 });
 			}
 		} else if (src_cookie == null || src_cookie == '') {
 			Cookies.set('cicada_src', document.referrer, { expires: 120 });

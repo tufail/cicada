@@ -119,7 +119,7 @@ var CicadaTrack = function () {
 	function CicadaTrack() {
 		_classCallCheck(this, CicadaTrack);
 
-		this.url_src = this.getParameter('utm_source') || false;
+		this.url_src = this.getParameter('utm_source') || this.getParameter('gclid') || false;
 		this.url_mdm = this.getParameter('utm_medium') || false;
 		this.boot();
 	}
@@ -208,13 +208,16 @@ var CicadaTrack = function () {
 		key: 'setFirstTrackingCookies',
 		value: function setFirstTrackingCookies() {
 			var src_cookie = _jsCookie2.default.get('cicada_src');
+			debugger;
 			// If at least one URL parameter exist AND the cookie doesn't exist
 			if ((this.url_src !== false || this.url_mdm !== false) && (src_cookie == null || src_cookie == '')) {
 				if (this.url_src !== false) {
 					_jsCookie2.default.set('cicada_src', this.url_src, { expires: 120 });
 				}
-				if (url_mdm !== false) {
+				if (this.url_mdm !== false) {
 					_jsCookie2.default.set('cicada_mdm', this.url_mdm, { expires: 120 });
+				} else {
+					_jsCookie2.default.set('cicada_mdm', 'adwords', { expires: 120 });
 				}
 			} else if (src_cookie == null || src_cookie == '') {
 				_jsCookie2.default.set('cicada_src', document.referrer, { expires: 120 });
