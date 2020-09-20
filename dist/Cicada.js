@@ -146,12 +146,15 @@ var CicadaTrack = function () {
 			});
 
 			$(window).on('load', function () {
+				var that = _this;
 				setTimeout(function () {
-					$('a[href]').each(function (link) {
-						var nlink = $(this).attr('href');
-						if (nlink !== '#' && this.is_external(nlink)) {
-							var nhrf = this.updateQprm(nlink, 'crsi', _jsCookie2.default.get('crsi'));
-							$(this).attr('href', nhrf);
+					$('a[href]').each(function () {
+						if ($(this).attr('href')) {
+							var nlink = $(this).attr('href');
+							if (nlink !== '#' && that.is_external(nlink)) {
+								var nhrf = that.updateQprm(nlink, 'crsi', _jsCookie2.default.get('crsi'));
+								$(this).attr('href', nhrf);
+							}
 						}
 					});
 				}, 2000);
@@ -220,13 +223,15 @@ var CicadaTrack = function () {
 					_jsCookie2.default.set('cicada_mdm', 'cpc', { expires: 120 });
 				}
 			} else if (src_cookie == null || src_cookie == '') {
-				_jsCookie2.default.set('cicada_src', document.referrer, { expires: 120 });
-				if (window.location.href == document.referrer) {
+				//Cookies.set('cicada_src', document.referrer, { expires: 120 });
+				if (document.referrer === '' || window.location.href == document.referrer) {
 					_jsCookie2.default.set('cicada_mdm', 'direct', { expires: 120 });
 					_jsCookie2.default.set('cicada_src', window.location.host, { expires: 120 });
 				} else {
-					_jsCookie2.default.set('cicada_src', document.referrer.match('.*\://(?:www.)?([^\/]+)')[1] || document.referrer.match('.*\://(?:www.)?([^\/]+)')[0], { expires: 120 });
-					_jsCookie2.default.set('cicada_mdm', 'organic', { expires: 120 });
+					if (document.referrer) {
+						_jsCookie2.default.set('cicada_src', document.referrer.match('.*://(?:www.)?([^/]+)')[1] || document.referrer.match('.*://(?:www.)?([^/]+)')[0], { expires: 120 });
+						_jsCookie2.default.set('cicada_mdm', 'organic', { expires: 120 });
+					}
 				}
 			}
 		}

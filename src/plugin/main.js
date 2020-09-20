@@ -25,12 +25,15 @@ export default class CicadaTrack {
 		});
 
 		$(window).on('load', () => {
+			let that = this;
 			setTimeout(() => {
-				$('a[href]').each(function(link) {
-					var nlink = $(this).attr('href');
-					if (nlink !== '#' && this.is_external(nlink)) {
-						var nhrf = this.updateQprm(nlink, 'crsi', Cookies.get('crsi'));
-						$(this).attr('href', nhrf);
+				$('a[href]').each(function() {
+					if ($(this).attr('href')) {
+						var nlink = $(this).attr('href');
+						if (nlink !== '#' && that.is_external(nlink)) {
+							var nhrf = that.updateQprm(nlink, 'crsi', Cookies.get('crsi'));
+							$(this).attr('href', nhrf);
+						}
 					}
 				});
 			}, 2000);
@@ -80,28 +83,31 @@ export default class CicadaTrack {
 	}
 
 	setFirstTrackingCookies() {
-		let src_cookie = Cookies.get('cicada_src'); 
+		let src_cookie = Cookies.get('cicada_src');
 		// If at least one URL parameter exist AND the cookie doesn't exist
 		if ((this.url_src !== false || this.url_glicd !== false) && (src_cookie == null || src_cookie == '')) {
 			if (this.url_src !== false) {
-				Cookies.set('cicada_src', (this.url_src || 'google'), { expires: 120 });  
+				Cookies.set('cicada_src', this.url_src || 'google', { expires: 120 });
 			}
 			if (this.url_mdm !== false) {
 				Cookies.set('cicada_mdm', this.url_mdm, { expires: 120 });
 			} else {
-				Cookies.set('cicada_mdm', 'cpc', { expires: 120 });  
+				Cookies.set('cicada_mdm', 'cpc', { expires: 120 });
 			}
 		} else if (src_cookie == null || src_cookie == '') {
 			//Cookies.set('cicada_src', document.referrer, { expires: 120 });
-			if (document.referrer === "" || window.location.href == document.referrer) {
+			if (document.referrer === '' || window.location.href == document.referrer) {
 				Cookies.set('cicada_mdm', 'direct', { expires: 120 });
 				Cookies.set('cicada_src', window.location.host, { expires: 120 });
 			} else {
-				if (document.referrer){
-					Cookies.set('cicada_src', (document.referrer.match('.*\://(?:www.)?([^\/]+)')[1] || document.referrer.match('.*\://(?:www.)?([^\/]+)')[0]), { expires: 120 });
-				    Cookies.set('cicada_mdm', 'organic', { expires: 120 });
+				if (document.referrer) {
+					Cookies.set(
+						'cicada_src',
+						document.referrer.match('.*://(?:www.)?([^/]+)')[1] || document.referrer.match('.*://(?:www.)?([^/]+)')[0],
+						{ expires: 120 }
+					);
+					Cookies.set('cicada_mdm', 'organic', { expires: 120 });
 				}
-				
 			}
 		}
 	}
