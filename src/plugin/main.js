@@ -2,7 +2,8 @@ import Cookies from 'js-cookie';
 
 export default class CicadaTrack {
 	constructor() {
-		this.url_src = this.getParameter('utm_source') || this.getParameter('gclid') || false;
+		this.url_src = this.getParameter('utm_source') || false;
+		this.url_glicd = this.getParameter('gclid') || false;
 		this.url_mdm = this.getParameter('utm_medium') || false;
 		this.boot();
 	}
@@ -79,25 +80,24 @@ export default class CicadaTrack {
 	}
 
 	setFirstTrackingCookies() {
-		let src_cookie = Cookies.get('cicada_src');
-		debugger;
+		let src_cookie = Cookies.get('cicada_src'); 
 		// If at least one URL parameter exist AND the cookie doesn't exist
-		if ((this.url_src !== false || this.url_mdm !== false) && (src_cookie == null || src_cookie == '')) {
+		if ((this.url_src !== false || this.url_glicd !== false) && (src_cookie == null || src_cookie == '')) {
 			if (this.url_src !== false) {
-				Cookies.set('cicada_src', this.url_src, { expires: 120 });
+				Cookies.set('cicada_src', (this.url_src || 'google'), { expires: 120 });  
 			}
 			if (this.url_mdm !== false) {
 				Cookies.set('cicada_mdm', this.url_mdm, { expires: 120 });
 			} else {
-				Cookies.set('cicada_mdm', 'adwords', { expires: 120 });
+				Cookies.set('cicada_mdm', 'cpc', { expires: 120 });  
 			}
 		} else if (src_cookie == null || src_cookie == '') {
 			Cookies.set('cicada_src', document.referrer, { expires: 120 });
 			if (window.location.href == document.referrer) {
 				Cookies.set('cicada_mdm', 'direct', { expires: 120 });
-				Cookies.set('cicada_src', window.location.href, { expires: 120 });
+				Cookies.set('cicada_src', window.location.host, { expires: 120 });
 			} else {
-				Cookies.set('cicada_src', document.referrer, { expires: 120 });
+				Cookies.set('cicada_src', (document.referrer.match('.*\://(?:www.)?([^\/]+)')[1] || document.referrer.match('.*\://(?:www.)?([^\/]+)')[0]), { expires: 120 });
 				Cookies.set('cicada_mdm', 'organic', { expires: 120 });
 			}
 		}
