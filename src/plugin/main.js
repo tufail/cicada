@@ -92,13 +92,16 @@ export default class CicadaTrack {
 				Cookies.set('cicada_mdm', 'cpc', { expires: 120 });  
 			}
 		} else if (src_cookie == null || src_cookie == '') {
-			Cookies.set('cicada_src', document.referrer, { expires: 120 });
-			if (window.location.href == document.referrer) {
+			//Cookies.set('cicada_src', document.referrer, { expires: 120 });
+			if (document.referrer === "" || window.location.href == document.referrer) {
 				Cookies.set('cicada_mdm', 'direct', { expires: 120 });
 				Cookies.set('cicada_src', window.location.host, { expires: 120 });
 			} else {
-				Cookies.set('cicada_src', (document.referrer.match('.*\://(?:www.)?([^\/]+)')[1] || document.referrer.match('.*\://(?:www.)?([^\/]+)')[0]), { expires: 120 });
-				Cookies.set('cicada_mdm', 'organic', { expires: 120 });
+				if (document.referrer){
+					Cookies.set('cicada_src', (document.referrer.match('.*\://(?:www.)?([^\/]+)')[1] || document.referrer.match('.*\://(?:www.)?([^\/]+)')[0]), { expires: 120 });
+				    Cookies.set('cicada_mdm', 'organic', { expires: 120 });
+				}
+				
 			}
 		}
 	}
