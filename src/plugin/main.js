@@ -12,7 +12,7 @@ export default class CicadaTrack {
 		this.setFirstTrackingCookies();
 		let that = this;
 		$(document).ready(() => {
-			if (!that.getQueryString('crsi')) {
+			if (!Cookies.get('crsi')) {
 				$.get('https://www.cloudflare.com/cdn-cgi/trace', (data) => {
 					var dataarray = data.split('\n');
 					var nameDf = dataarray[2].slice(3);

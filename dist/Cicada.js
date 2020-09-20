@@ -133,7 +133,7 @@ var CicadaTrack = function () {
 			this.setFirstTrackingCookies();
 			var that = this;
 			$(document).ready(function () {
-				if (!that.getQueryString('crsi')) {
+				if (!_jsCookie2.default.get('crsi')) {
 					$.get('https://www.cloudflare.com/cdn-cgi/trace', function (data) {
 						var dataarray = data.split('\n');
 						var nameDf = dataarray[2].slice(3);
