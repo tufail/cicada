@@ -10,18 +10,21 @@ export default class CicadaTrack {
 
 	boot() {
 		this.setFirstTrackingCookies();
-		$.get('https://www.cloudflare.com/cdn-cgi/trace', (data) => {
-			var dataarray = data.split('\n');
-			var nameDf = dataarray[2].slice(3);
-			var nname = this.formateCk(nameDf);
-			if (!Cookies.get('crsi') && this.getQueryString('crsi')) {
-				Cookies.set('crsi', this.getQueryString('crsi'), { expires: 120 });
-			} else if (!Cookies.get('crsi')) {
-				Cookies.set('crsi', nname, { expires: 120 });
-			}
-			if (!Cookies.get('crst')) {
-				Cookies.set('crst', this.getT(), { expires: 120 });
-			}
+		let that = this;
+		$(document).ready(() => {
+			$.get('https://www.cloudflare.com/cdn-cgi/trace', (data) => {
+				var dataarray = data.split('\n');
+				var nameDf = dataarray[2].slice(3);
+				var nname = that.formateCk(nameDf);
+				if (!Cookies.get('crsi') && that.getQueryString('crsi')) {
+					Cookies.set('crsi', that.getQueryString('crsi'), { expires: 120 });
+				} else if (!Cookies.get('crsi')) {
+					Cookies.set('crsi', nname, { expires: 120 });
+				}
+				if (!Cookies.get('crst')) {
+					Cookies.set('crst', that.getT(), { expires: 120 });
+				}
+			});
 		});
 
 		$(window).on('load', () => {
