@@ -133,19 +133,21 @@ var CicadaTrack = function () {
 			this.setFirstTrackingCookies();
 			var that = this;
 			$(document).ready(function () {
-				$.get('https://www.cloudflare.com/cdn-cgi/trace', function (data) {
-					var dataarray = data.split('\n');
-					var nameDf = dataarray[2].slice(3);
-					var nname = that.formateCk(nameDf);
-					if (!_jsCookie2.default.get('crsi') && that.getQueryString('crsi')) {
-						_jsCookie2.default.set('crsi', that.getQueryString('crsi'), { expires: 120 });
-					} else if (!_jsCookie2.default.get('crsi')) {
-						_jsCookie2.default.set('crsi', nname, { expires: 120 });
-					}
-					if (!_jsCookie2.default.get('crst')) {
-						_jsCookie2.default.set('crst', that.getT(), { expires: 120 });
-					}
-				});
+				if (!that.getQueryString('crsi')) {
+					$.get('https://www.cloudflare.com/cdn-cgi/trace', function (data) {
+						var dataarray = data.split('\n');
+						var nameDf = dataarray[2].slice(3);
+						var nname = that.formateCk(nameDf);
+						if (!_jsCookie2.default.get('crsi') && that.getQueryString('crsi')) {
+							_jsCookie2.default.set('crsi', that.getQueryString('crsi'), { expires: 120 });
+						} else if (!_jsCookie2.default.get('crsi')) {
+							_jsCookie2.default.set('crsi', nname, { expires: 120 });
+						}
+						if (!_jsCookie2.default.get('crst')) {
+							_jsCookie2.default.set('crst', that.getT(), { expires: 120 });
+						}
+					});
+				}
 			});
 
 			$(window).on('load', function () {
