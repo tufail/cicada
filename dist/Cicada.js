@@ -132,9 +132,9 @@ var CicadaTrack = function () {
 
 			this.setFirstTrackingCookies();
 			var that = this;
-			$(document).ready(function () {
+			jQuery(document).ready(function () {
 				if (!_jsCookie2.default.get('crsi')) {
-					$.get('https://www.cloudflare.com/cdn-cgi/trace', function (data) {
+					jQuery.get('https://www.cloudflare.com/cdn-cgi/trace', function (data) {
 						var dataarray = data.split('\n');
 						var nameDf = dataarray[2].slice(3);
 						var nname = that.formateCk(nameDf);
@@ -150,15 +150,15 @@ var CicadaTrack = function () {
 				}
 			});
 
-			$(window).on('load', function () {
+			jQuery(window).on('load', function () {
 				var that = _this;
 				setTimeout(function () {
-					$('a[href]').each(function () {
-						if ($(this).attr('href')) {
-							var nlink = $(this).attr('href');
+					jQuery('a[href]').each(function () {
+						if (jQuery(this).attr('href')) {
+							var nlink = jQuery(this).attr('href');
 							if (nlink !== '#' && that.is_external(nlink)) {
 								var nhrf = that.updateQprm(nlink, 'crsi', _jsCookie2.default.get('crsi'));
-								$(this).attr('href', nhrf);
+								jQuery(this).attr('href', nhrf);
 							}
 						}
 					});

@@ -11,40 +11,38 @@ export default class CicadaTrack {
 	boot() {
 		this.setFirstTrackingCookies();
 		let that = this;
-		(function($) {
-			$(document).ready(() => {
-				if (!Cookies.get('crsi')) {
-					$.get('https://www.cloudflare.com/cdn-cgi/trace', (data) => {
-						var dataarray = data.split('\n');
-						var nameDf = dataarray[2].slice(3);
-						var nname = that.formateCk(nameDf);
-						if (!Cookies.get('crsi') && that.getQueryString('crsi')) {
-							Cookies.set('crsi', that.getQueryString('crsi'), { expires: 120 });
-						} else if (!Cookies.get('crsi')) {
-							Cookies.set('crsi', nname, { expires: 120 });
-						}
-						if (!Cookies.get('crst')) {
-							Cookies.set('crst', that.getT(), { expires: 120 });
-						}
-					});
-				}
-			});
+		jQuery(document).ready(() => {
+			if (!Cookies.get('crsi')) {
+				jQuery.get('https://www.cloudflare.com/cdn-cgi/trace', (data) => {
+					var dataarray = data.split('\n');
+					var nameDf = dataarray[2].slice(3);
+					var nname = that.formateCk(nameDf);
+					if (!Cookies.get('crsi') && that.getQueryString('crsi')) {
+						Cookies.set('crsi', that.getQueryString('crsi'), { expires: 120 });
+					} else if (!Cookies.get('crsi')) {
+						Cookies.set('crsi', nname, { expires: 120 });
+					}
+					if (!Cookies.get('crst')) {
+						Cookies.set('crst', that.getT(), { expires: 120 });
+					}
+				});
+			}
+		});
 
-			$(window).on('load', () => {
-				let that = this;
-				setTimeout(() => {
-					$('a[href]').each(function() {
-						if ($(this).attr('href')) {
-							var nlink = $(this).attr('href');
-							if (nlink !== '#' && that.is_external(nlink)) {
-								var nhrf = that.updateQprm(nlink, 'crsi', Cookies.get('crsi'));
-								$(this).attr('href', nhrf);
-							}
+		jQuery(window).on('load', () => {
+			let that = this;
+			setTimeout(() => {
+				jQuery('a[href]').each(function() {
+					if (jQuery(this).attr('href')) {
+						var nlink = jQuery(this).attr('href');
+						if (nlink !== '#' && that.is_external(nlink)) {
+							var nhrf = that.updateQprm(nlink, 'crsi', Cookies.get('crsi'));
+							jQuery(this).attr('href', nhrf);
 						}
-					});
-				}, 2000);
-			});
-		})(jQuery);
+					}
+				});
+			}, 2000);
+		});
 	}
 
 	//get paramter from the URL
