@@ -35,18 +35,16 @@ export default class CicadaTrack {
 
 		jQuery(window).on('load', () => {
 			let that = this;
-			setTimeout(() => {
-				jQuery('a[href]').each(function() {
-					if (jQuery(this).attr('href')) {
-						var nlink = jQuery(this).attr('href');
-						if (nlink !== '#' && that.is_external(nlink)) {
-							var nhrf = that.updateQprm(nlink, 'crsi', Cookies.get('crsi'));
-							nhrf = that.updateQprm(nhrf, 'cicada_org_src', Cookies.get('cicada_org_src'));
-							jQuery(this).attr('href', nhrf);
-						}
+			jQuery('a[href]').each(function() {
+				if (jQuery(this).attr('href')) {
+					var nlink = jQuery(this).attr('href');
+					if (nlink !== '#' && that.is_external(nlink)) {
+						var nhrf = that.updateQprm(nlink, 'crsi', Cookies.get('crsi'));
+						nhrf = that.updateQprm(nhrf, 'cicada_org_src', Cookies.get('cicada_org_src'));
+						jQuery(this).attr('href', nhrf);
 					}
-				});
-			}, 2000);
+				}
+			});
 		});
 	}
 

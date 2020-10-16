@@ -156,18 +156,16 @@ var CicadaTrack = function () {
 
 			jQuery(window).on('load', function () {
 				var that = _this;
-				setTimeout(function () {
-					jQuery('a[href]').each(function () {
-						if (jQuery(this).attr('href')) {
-							var nlink = jQuery(this).attr('href');
-							if (nlink !== '#' && that.is_external(nlink)) {
-								var nhrf = that.updateQprm(nlink, 'crsi', _jsCookie2.default.get('crsi'));
-								nhrf = that.updateQprm(nhrf, 'cicada_org_src', _jsCookie2.default.get('cicada_org_src'));
-								jQuery(this).attr('href', nhrf);
-							}
+				jQuery('a[href]').each(function () {
+					if (jQuery(this).attr('href')) {
+						var nlink = jQuery(this).attr('href');
+						if (nlink !== '#' && that.is_external(nlink)) {
+							var nhrf = that.updateQprm(nlink, 'crsi', _jsCookie2.default.get('crsi'));
+							nhrf = that.updateQprm(nhrf, 'cicada_org_src', _jsCookie2.default.get('cicada_org_src'));
+							jQuery(this).attr('href', nhrf);
 						}
-					});
-				}, 2000);
+					}
+				});
 			});
 		}
 
