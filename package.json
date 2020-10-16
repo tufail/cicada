@@ -1,6 +1,6 @@
 {
 	"name": "@tufail/cicada",
-	"version": "1.0.9",
+	"version": "1.1.0",
 	"description": "tracking.",
 	"main": "src/main.js",
 	"scripts": {
@@ -33,6 +33,7 @@
 		"webpack": "^4.8.3"
 	},
 	"dependencies": {
+		"axios": "^0.20.0",
 		"js-cookie": "^2.2.1",
 		"webpack-cli": "^3.3.12"
 	}
