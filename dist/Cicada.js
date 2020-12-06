@@ -223,9 +223,9 @@ var CicadaTrack = function () {
 			var mdm_cookie = _jsCookie2.default.get('cicada_mdm');
 			if (!mdm_cookie) {
 				if (document.referrer === '' || window.location.href == document.referrer) {
-					_jsCookie2.default.set('cicada_mdm', 'referrer');
-				} else {
 					_jsCookie2.default.set('cicada_mdm', 'direct');
+				} else {
+					_jsCookie2.default.set('cicada_mdm', 'referrer');
 				}
 			}
 			// If at least one URL parameter exist AND the cookie doesn't exist
