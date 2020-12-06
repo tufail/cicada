@@ -95,9 +95,9 @@ export default class CicadaTrack {
 		let mdm_cookie = Cookies.get('cicada_mdm');
 		if (!mdm_cookie) {
 			if (document.referrer === '' || window.location.href == document.referrer) {
-				Cookies.set('cicada_mdm', 'referrer');
-			} else {
 				Cookies.set('cicada_mdm', 'direct');
+			} else {
+				Cookies.set('cicada_mdm', 'referrer');
 			}
 		}
 		// If at least one URL parameter exist AND the cookie doesn't exist
