@@ -37,9 +37,9 @@ export default class CicadaTrack {
 			let that = this;
 			jQuery('a[href]').each(function () {
 				if (jQuery(this).attr('href')) {
-					var nlink = jQuery(this).attr('href');
+					let nlink = jQuery(this).attr('href');
 					if (nlink !== '#' && that.is_external(nlink)) {
-						var nhrf = that.updateQprm(nlink, 'crsi', Cookies.get('crsi'));
+						let nhrf = that.updateQprm(nlink, 'crsi', Cookies.get('crsi'));
 						nhrf = that.updateQprm(nhrf, 'cicada_org_src', Cookies.get('cicada_org_src'));
 						jQuery(this).attr('href', nhrf);
 					}
@@ -51,8 +51,8 @@ export default class CicadaTrack {
 	//get paramter from the URL
 	getParameter(param) {
 		let params = window.location.search.substr(1).split('&');
-		for (var i = 0; i < params.length; i++) {
-			var p = params[i].split('=');
+		for (let i = 0; i < params.length; i++) {
+			let p = params[i].split('=');
 			if (p[0] == param) {
 				return decodeURIComponent(p[1]);
 			}
@@ -61,15 +61,15 @@ export default class CicadaTrack {
 	}
 
 	getQueryString(field, url) {
-		var href = url ? url : window.location.href;
-		var reg = new RegExp('[?&]' + field + '=([^&#]*)', 'i');
-		var string = reg.exec(href);
+		let href = url ? url : window.location.href;
+		let reg = new RegExp('[?&]' + field + '=([^&#]*)', 'i');
+		let string = reg.exec(href);
 		return string ? string[1] : null;
 	}
 
 	updateQprm(uri, key, value) {
-		var re = new RegExp('([?&])' + key + '=.*?(&|$)', 'i');
-		var separator = uri.indexOf('?') !== -1 ? '&' : '?';
+		let re = new RegExp('([?&])' + key + '=.*?(&|$)', 'i');
+		let separator = uri.indexOf('?') !== -1 ? '&' : '?';
 		if (uri.match(re)) {
 			return uri.replace(re, '$1' + key + '=' + value + '$2');
 		} else {
@@ -78,7 +78,7 @@ export default class CicadaTrack {
 	}
 
 	getT(timestamp) {
-		var date = new Date();
+		let date = new Date();
 		return [
 			('0' + date.getDate()).slice(-2), // Get day and pad it with zeroes
 			('0' + (date.getMonth() + 1)).slice(-2), // Get month and pad it with zeroes
