@@ -1,6 +1,6 @@
 {
 	"name": "@tufail/cicada",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"description": "tracking.",
 	"main": "src/main.js",
 	"scripts": {

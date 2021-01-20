@@ -123,55 +123,14 @@ var CicadaTrack = function () {
 		this.url_glicd = this.getParameter('gclid') || false;
 		this.url_mdm = this.getParameter('utm_medium') || false;
 		this.org_src = this.getParameter('cicada_org_src') || false;
+		this.org_mdm = this.getParameter('cicada_org_mdm') || false;
 		this.boot();
 	}
 
+	//get paramter from the URL
+
+
 	_createClass(CicadaTrack, [{
-		key: 'boot',
-		value: function boot() {
-			var _this = this;
-
-			this.setFirstTrackingCookies();
-			var that = this;
-			jQuery(document).ready(function () {
-				if (!_jsCookie2.default.get('crsi')) {
-					jQuery.get('https://www.cloudflare.com/cdn-cgi/trace', function (data) {
-						var dataarray = data.split('\n');
-						var nameDf = dataarray[2].slice(3);
-						var nname = that.formateCk(nameDf);
-						if (!_jsCookie2.default.get('crsi') && that.getQueryString('crsi')) {
-							_jsCookie2.default.set('crsi', that.getQueryString('crsi'), { expires: 120 });
-						} else if (!_jsCookie2.default.get('crsi')) {
-							_jsCookie2.default.set('crsi', nname, { expires: 120 });
-						}
-						if (!_jsCookie2.default.get('crst')) {
-							_jsCookie2.default.set('crst', that.getT(), { expires: 120 });
-						}
-						if (!_jsCookie2.default.get('cicada_org_src') && _this.org_src) {
-							_jsCookie2.default.set('cicada_org_src', _this.org_src, { expires: 120 });
-						}
-					});
-				}
-			});
-
-			jQuery(window).on('load', function () {
-				var that = _this;
-				jQuery('a[href]').each(function () {
-					if (jQuery(this).attr('href')) {
-						var nlink = jQuery(this).attr('href');
-						if (nlink !== '#' && that.is_external(nlink)) {
-							var nhrf = that.updateQprm(nlink, 'crsi', _jsCookie2.default.get('crsi'));
-							nhrf = that.updateQprm(nhrf, 'cicada_org_src', _jsCookie2.default.get('cicada_org_src'));
-							jQuery(this).attr('href', nhrf);
-						}
-					}
-				});
-			});
-		}
-
-		//get paramter from the URL
-
-	}, {
 		key: 'getParameter',
 		value: function getParameter(param) {
 			var params = window.location.search.substr(1).split('&');
@@ -221,36 +180,17 @@ var CicadaTrack = function () {
 		value: function setFirstTrackingCookies() {
 			var src_cookie = _jsCookie2.default.get('cicada_src');
 			var mdm_cookie = _jsCookie2.default.get('cicada_mdm');
-			if (!mdm_cookie) {
-				if (document.referrer === '' || window.location.href == document.referrer) {
-					_jsCookie2.default.set('cicada_mdm', 'direct');
+			if (!mdm_cookie || !src_cookie) {
+				var srcData = this.checkMedium(document.referrer || window.location.href);
+				_jsCookie2.default.set('cicada_src', srcData.source, { expires: 120 });
+				_jsCookie2.default.set('cicada_mdm', srcData.medium, { expires: 120 });
+
+				if (this.org_src) {
+					_jsCookie2.default.set('cicada_org_src', this.org_src, { expires: 120 });
+					_jsCookie2.default.set('cicada_org_mdm', this.org_mdm || 'referrer', { expires: 120 });
 				} else {
-					_jsCookie2.default.set('cicada_mdm', 'referrer');
-				}
-			}
-			// If at least one URL parameter exist AND the cookie doesn't exist
-			if ((this.url_src !== false || this.url_glicd !== false) && (src_cookie == null || src_cookie == '')) {
-				if (this.url_src !== false) {
-					_jsCookie2.default.set('cicada_src', this.url_src || 'google', { expires: 120 });
-					if (!this.org_src && !_jsCookie2.default.get('cicada_org_src')) _jsCookie2.default.set('cicada_org_src', this.url_src || 'google', { expires: 120 });
-				}
-				if (this.url_mdm !== false) {
-					_jsCookie2.default.set('cicada_org_mdm', this.url_mdm, { expires: 120 });
-				} else {
-					_jsCookie2.default.set('cicada_org_mdm', 'cpc', { expires: 120 });
-				}
-			} else if (src_cookie == null || src_cookie == '') {
-				//Cookies.set('cicada_src', document.referrer, { expires: 120 });
-				if (document.referrer === '' || window.location.href == document.referrer) {
-					_jsCookie2.default.set('cicada_org_mdm', 'direct', { expires: 120 });
-					_jsCookie2.default.set('cicada_src', window.location.host, { expires: 120 });
-					if (!this.org_src && !_jsCookie2.default.get('cicada_org_src')) _jsCookie2.default.set('cicada_org_src', window.location.host, { expires: 120 });
-				} else {
-					if (document.referrer) {
-						_jsCookie2.default.set('cicada_src', document.referrer.match('.*://(?:www.)?([^/]+)')[1] || document.referrer.match('.*://(?:www.)?([^/]+)')[0], { expires: 120 });
-						if (!this.org_src && !_jsCookie2.default.get('cicada_org_src')) _jsCookie2.default.set('cicada_org_src', document.referrer.match('.*://(?:www.)?([^/]+)')[1] || document.referrer.match('.*://(?:www.)?([^/]+)')[0], { expires: 120 });
-						_jsCookie2.default.set('cicada_org_mdm', 'organic', { expires: 120 });
-					}
+					_jsCookie2.default.set('cicada_org_src', srcData.source, { expires: 120 });
+					_jsCookie2.default.set('cicada_org_mdm', srcData.medium, { expires: 120 });
 				}
 			}
 		}
@@ -261,6 +201,80 @@ var CicadaTrack = function () {
 			if (typeof match[1] === 'string' && match[1].length > 0 && match[1].toLowerCase() !== location.protocol) return true;
 			if (typeof match[2] === 'string' && match[2].length > 0 && match[2].replace(new RegExp(':(' + { 'http:': 80, 'https:': 443 }[location.protocol] + ')?$'), '') !== location.host) return true;
 			return false;
+		}
+	}, {
+		key: 'boot',
+		value: function boot() {
+			var _this = this;
+
+			this.setFirstTrackingCookies();
+			var that = this;
+			jQuery(document).ready(function () {
+				if (!_jsCookie2.default.get('crsi')) {
+					jQuery.get('https://www.cloudflare.com/cdn-cgi/trace', function (data) {
+						var dataarray = data.split('\n');
+						var nameDf = dataarray[2].slice(3);
+						var nname = that.formateCk(nameDf);
+						if (!_jsCookie2.default.get('crsi') && that.getQueryString('crsi')) {
+							_jsCookie2.default.set('crsi', that.getQueryString('crsi'), { expires: 120 });
+						} else if (!_jsCookie2.default.get('crsi')) {
+							_jsCookie2.default.set('crsi', nname, { expires: 120 });
+						}
+						if (!_jsCookie2.default.get('crst')) {
+							_jsCookie2.default.set('crst', that.getT(), { expires: 120 });
+						}
+					});
+				}
+			});
+
+			jQuery(window).on('load', function () {
+				var that = _this;
+				jQuery('a[href]').each(function () {
+					if (jQuery(this).attr('href')) {
+						var nlink = jQuery(this).attr('href');
+						if (nlink !== '#' && that.is_external(nlink)) {
+							var nhrf = that.updateQprm(nlink, 'crsi', _jsCookie2.default.get('crsi'));
+							nhrf = that.updateQprm(nhrf, 'cicada_org_src', _jsCookie2.default.get('cicada_org_src'));
+							nhrf = that.updateQprm(nhrf, 'cicada_org_mdm', _jsCookie2.default.get('cicada_org_mdm'));
+							jQuery(this).attr('href', nhrf);
+						}
+					}
+				});
+			});
+		}
+	}, {
+		key: 'checkMedium',
+		value: function checkMedium(urlString) {
+			urlString = urlString.replace('&cicada_org_src=' + this.org_src, '');
+			urlString = urlString.replace('cicada_org_src=' + this.org_src, '');
+			urlString = urlString.replace('&cicada_org_mdm=' + this.org_mdm, '');
+			urlString = urlString.replace('cicada_org_mdm=' + this.org_mdm, '');
+			var srcDomain = urlString.match('.*://(?:www.)?([^/]+)')[1] || urlString.match('.*://(?:www.)?([^/]+)')[0];
+			var directUrl = window.location.href.match('.*://(?:www.)?([^/]+)')[1] || window.location.href.match('.*://(?:www.)?([^/]+)')[0];
+			debugger;
+			if (this.url_mdm) {
+				return { source: this.url_src, medium: this.url_mdm || 'CPC' };
+			} else if (this.url_glicd) {
+				return { source: this.url_src || 'google', medium: this.url_mdm || 'CPC' };
+			} else if (urlString.indexOf('facebook') > -1 || urlString.indexOf('fb') > -1) {
+				return { source: this.url_src || 'facebook', medium: this.url_mdm || 'social' };
+			} else if (urlString.indexOf('twitter') > -1) {
+				return { source: this.url_src || 'twitter', medium: this.url_mdm || 'social' };
+			} else if (urlString.indexOf('gmail') > -1 || urlString.indexOf('outlook') > -1 || urlString.indexOf('email') > -1 || urlString.indexOf('newsletter') > -1) {
+				return { source: srcDomain, medium: 'email' };
+			} else if (urlString.indexOf('coupons.com') > -1) {
+				return { source: 'coupons.com', medium: 'affiliate' };
+			} else if (urlString.indexOf('google.com') > -1) {
+				return { source: 'google.com', medium: 'organic' };
+			} else if (urlString.indexOf('bing.com') > -1) {
+				return { source: 'bing.com', medium: 'organic' };
+			} else if (urlString.indexOf('duckduckgo.com') > -1) {
+				return { source: 'duckduckgo', medium: 'organic' };
+			} else if (window.location.href === document.referrer || document.referrer === '') {
+				return { source: directUrl, medium: 'direct' };
+			} else {
+				return { source: srcDomain, medium: 'referrer' };
+			}
 		}
 	}]);
 
