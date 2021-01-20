@@ -6,7 +6,6 @@ export default class CicadaTrack {
 		this.url_glicd = this.getParameter('gclid') || false;
 		this.url_mdm = this.getParameter('utm_medium') || false;
 		this.org_src = this.getParameter('cicada_org_src') || false;
-		this.org_mdm = this.getParameter('cicada_org_mdm') || false;
 		this.boot();
 	}
 
@@ -55,17 +54,48 @@ export default class CicadaTrack {
 	setFirstTrackingCookies() {
 		let src_cookie = Cookies.get('cicada_src');
 		let mdm_cookie = Cookies.get('cicada_mdm');
-		if (!mdm_cookie || !src_cookie) {
-			let srcData = this.checkMedium(document.referrer || window.location.href);
-			Cookies.set('cicada_src', srcData.source, { expires: 120 });
-			Cookies.set('cicada_mdm', srcData.medium, { expires: 120 });
-
-			if (this.org_src) {
-				Cookies.set('cicada_org_src', this.org_src, { expires: 120 });
-				Cookies.set('cicada_org_mdm', this.org_mdm || 'referrer', { expires: 120 });
+		if (!mdm_cookie) {
+			if (document.referrer === '' || window.location.href == document.referrer) {
+				Cookies.set('cicada_mdm', 'direct');
 			} else {
-				Cookies.set('cicada_org_src', srcData.source, { expires: 120 });
-				Cookies.set('cicada_org_mdm', srcData.medium, { expires: 120 });
+				Cookies.set('cicada_mdm', 'referrer');
+			}
+		}
+		// If at least one URL parameter exist AND the cookie doesn't exist
+		if ((this.url_src !== false || this.url_glicd !== false) && (src_cookie == null || src_cookie == '')) {
+			if (this.url_src !== false) {
+				Cookies.set('cicada_src', this.url_src || 'google', { expires: 120 });
+				if (!this.org_src && !Cookies.get('cicada_org_src'))
+					Cookies.set('cicada_org_src', this.url_src || 'google', { expires: 120 });
+			}
+			if (this.url_mdm !== false) {
+				Cookies.set('cicada_org_mdm', this.url_mdm, { expires: 120 });
+			} else {
+				Cookies.set('cicada_org_mdm', 'cpc', { expires: 120 });
+			}
+		} else if (src_cookie == null || src_cookie == '') {
+			//Cookies.set('cicada_src', document.referrer, { expires: 120 });
+			if (document.referrer === '' || window.location.href == document.referrer) {
+				Cookies.set('cicada_org_mdm', 'direct', { expires: 120 });
+				Cookies.set('cicada_src', window.location.host, { expires: 120 });
+				if (!this.org_src && !Cookies.get('cicada_org_src'))
+					Cookies.set('cicada_org_src', window.location.host, { expires: 120 });
+			} else {
+				if (document.referrer) {
+					Cookies.set(
+						'cicada_src',
+						document.referrer.match('.*://(?:www.)?([^/]+)')[1] || document.referrer.match('.*://(?:www.)?([^/]+)')[0],
+						{ expires: 120 }
+					);
+					if (!this.org_src && !Cookies.get('cicada_org_src'))
+						Cookies.set(
+							'cicada_org_src',
+							document.referrer.match('.*://(?:www.)?([^/]+)')[1] ||
+							document.referrer.match('.*://(?:www.)?([^/]+)')[0],
+							{ expires: 120 }
+						);
+					Cookies.set('cicada_org_mdm', 'organic', { expires: 120 });
+				}
 			}
 		}
 	}
@@ -101,6 +131,9 @@ export default class CicadaTrack {
 					if (!Cookies.get('crst')) {
 						Cookies.set('crst', that.getT(), { expires: 120 });
 					}
+					if (!Cookies.get('cicada_org_src') && this.org_src) {
+						Cookies.set('cicada_org_src', this.org_src, { expires: 120 });
+					}
 				});
 			}
 		});
@@ -113,7 +146,6 @@ export default class CicadaTrack {
 					if (nlink !== '#' && that.is_external(nlink)) {
 						let nhrf = that.updateQprm(nlink, 'crsi', Cookies.get('crsi'));
 						nhrf = that.updateQprm(nhrf, 'cicada_org_src', Cookies.get('cicada_org_src'));
-						nhrf = that.updateQprm(nhrf, 'cicada_org_mdm', Cookies.get('cicada_org_mdm'));
 						jQuery(this).attr('href', nhrf);
 					}
 				}
@@ -122,35 +154,26 @@ export default class CicadaTrack {
 	}
 
 	checkMedium(urlString) {
-		urlString = urlString.replace('&cicada_org_src=' + this.org_src, '');
-		urlString = urlString.replace('cicada_org_src=' + this.org_src, '');
-		urlString = urlString.replace('&cicada_org_mdm=' + this.org_mdm, '');
-		urlString = urlString.replace('cicada_org_mdm=' + this.org_mdm, '');
-		let srcDomain = urlString.match('.*://(?:www.)?([^/]+)')[1] || urlString.match('.*://(?:www.)?([^/]+)')[0];
-		let directUrl = window.location.href.match('.*://(?:www.)?([^/]+)')[1] || window.location.href.match('.*://(?:www.)?([^/]+)')[0]
-		debugger;
 		if (this.url_mdm) {
 			return { source: this.url_src, medium: this.url_mdm || 'CPC' };
 		} else if (this.url_glicd) {
 			return { source: this.url_src || 'google', medium: this.url_mdm || 'CPC' };
-		} else if (urlString.indexOf('facebook') > -1 || urlString.indexOf('fb') > -1) {
+		} else if (urlString.indexOf('facebook') || urlString.indexOf('fb')) {
 			return { source: this.url_src || 'facebook', medium: this.url_mdm || 'social' }
-		} else if (urlString.indexOf('twitter') > -1) {
+		} else if (urlString.indexOf('twitter')) {
 			return { source: this.url_src || 'twitter', medium: this.url_mdm || 'social' }
-		} else if (urlString.indexOf('gmail') > -1 || urlString.indexOf('outlook') > -1 || urlString.indexOf('email') > -1 || urlString.indexOf('newsletter') > -1) {
-			return { source: srcDomain, medium: 'email' }
-		} else if (urlString.indexOf('coupons.com') > -1) {
-			return { source: 'coupons.com', medium: 'affiliate' }
-		} else if (urlString.indexOf('google.com') > -1) {
-			return { source: 'google.com', medium: 'organic' }
-		} else if (urlString.indexOf('bing.com') > -1) {
-			return { source: 'bing.com', medium: 'organic' }
-		} else if (urlString.indexOf('duckduckgo.com') > -1) {
+		} else if (urlString.indexOf('gmail') || urlString.indexOf('outlook') || urlString.indexOf('email') || urlString.indexOf('newsletter')) {
+			return { source: 'newsletter', medium: 'email' }
+		} else if (urlString.indexOf('coupons.com')) {
+			return { source: 'coupons', medium: 'affiliate' }
+		} else if (urlString.indexOf('google.com')) {
+			return { source: 'google', medium: 'organic' }
+		} else if (urlString.indexOf('bing.com')) {
+			return { source: 'bing', medium: 'organic' }
+		} else if (urlString.indexOf('duckduckgo.com')) {
 			return { source: 'duckduckgo', medium: 'organic' }
-		} else if ((window.location.href === document.referrer) || document.referrer === '') {
-			return { source: directUrl, medium: 'direct' }
 		} else {
-			return { source: srcDomain, medium: 'referrer' }
+			return { source: 'other', medium: 'other' }
 		}
 	}
 }
